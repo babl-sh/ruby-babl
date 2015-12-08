@@ -1,8 +1,6 @@
 require 'quartz'
 require 'base64'
 
-require "babl/version"
-
 
 module Babl
 
@@ -11,6 +9,10 @@ module Babl
     bin += "linux_amd64" if RUBY_PLATFORM =~ /linux/
     bin += "darwin_amd64" if RUBY_PLATFORM =~ /darwin/
     File.expand_path("../../bin/#{bin}", __FILE__)
+  end
+
+  def self.version
+    `#{bin_path} -version`.strip
   end
 
   def self.client
