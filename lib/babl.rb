@@ -3,7 +3,6 @@ require 'base64'
 
 
 module Babl
-
   def self.bin_path
     bin = 'babl-rpc_'
     bin += "linux_amd64" if RUBY_PLATFORM =~ /linux/
