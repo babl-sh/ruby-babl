@@ -17,7 +17,6 @@ module Babl
     @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
-  # TODO: env
   def self.module name, opts = {}
     params = {'Name' => name}
     if opts[:in]
