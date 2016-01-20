@@ -27,7 +27,7 @@ module Babl
   def self.module name, opts = {}
     params = {'Name' => name}
     if opts[:in]
-      params['Stdin'] = Base64.encode64(opts[:in])
+      params['Stdin'] = Base64.encode64(opts[:in]).strip
     end
     if opts[:env]
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v; h }
