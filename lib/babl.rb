@@ -4,10 +4,15 @@ require 'base64'
 
 module Babl
   def self.bin_path
-    bin = 'babl-rpc_'
-    bin += "linux_amd64" if RUBY_PLATFORM =~ /linux/
-    bin += "darwin_amd64" if RUBY_PLATFORM =~ /darwin/
-    File.expand_path("../../bin/#{bin}", __FILE__)
+    system = `which babl-rpc`.strip
+    if system.empty?
+      bin = 'babl-rpc_'
+      bin += "linux_amd64" if RUBY_PLATFORM =~ /linux/
+      bin += "darwin_amd64" if RUBY_PLATFORM =~ /darwin/
+      File.expand_path("../../bin/#{bin}", __FILE__)
+    else
+      system
+    end
   end
 
   def self.version
@@ -15,6 +20,7 @@ module Babl
   end
 
   def self.client
+    puts "Using bin '#{bin_path}'"
     @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
