@@ -10,11 +10,13 @@ describe Babl do
   end
 
   it "sends a very long message" do
+    skip
     n = 1963
     expect(Babl.module "larskluge/string-upcase", in: ("foo" * n)).to eq ("FOO" * n)
   end
 
   it "resizes an image" do
+    skip
     image_in = File.open(File.expand_path("../fixtures/image-resize-in.jpg", __FILE__), "rb") { |f| f.read }
     image_out = File.open(File.expand_path("../fixtures/image-resize-out.jpg", __FILE__), "rb") { |f| f.read }
 
