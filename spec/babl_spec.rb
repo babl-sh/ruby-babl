@@ -38,7 +38,7 @@ describe Babl do
     image_out = File.open(File.expand_path("../fixtures/image-resize-out.jpg", __FILE__), "rb") { |f| f.read }
 
     expect(image_in.size).to eq 36968
-    resized = Babl.module!('larskluge/image-resize', in: image_in, env: {WIDTH: 10, HEIGHT: 10, FORMAT: 'jpg'})
+    resized = Babl.module!('larskluge/image-resize', in: image_in, env: {WIDTH: '10', HEIGHT: '10', FORMAT: 'jpg'})
 
     expect(resized.size).to eq image_out.size
   end
