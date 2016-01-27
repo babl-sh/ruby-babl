@@ -5,7 +5,7 @@ require 'babl'
 
 Gem::Specification.new do |spec|
   spec.name          = "babl"
-  spec.version       = Babl.version
+  spec.version       = "0.2.1"
   spec.authors       = ["Lars Kluge"]
   spec.email         = ["l@larskluge.com"]
 
