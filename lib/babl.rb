@@ -3,6 +3,16 @@ require 'base64'
 
 
 module Babl
+  class ModuleError < StandardError
+    attr_reader :stdout, :stderr, :exitcode
+
+    def initialize opts = {}
+      @stdout = opts[:stdout]
+      @stderr = opts[:stderr]
+      @exitcode = opts[:exitcode]
+    end
+  end
+
   def self.bin_path
     system = `which babl-rpc`.strip
     if system.empty?
@@ -24,7 +34,7 @@ module Babl
     @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
-  def self.module name, opts = {}
+  def self.module! name, opts = {}
     params = {'Name' => name}
     if opts[:in]
       params['Stdin'] = Base64.encode64(opts[:in]).strip
@@ -33,6 +43,12 @@ module Babl
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v; h }
     end
     res = client[:babl].call('Module', params)
-    Base64.decode64(res["Stdout"])
+    stdout = Base64.decode64(res["Stdout"]).strip
+    exitcode = res['Exitcode']
+    if exitcode != 0
+      stderr = Base64.decode64(res["Stderr"]).strip
+      raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode), "Module execution failed with exitcode #{exitcode}"
+    end
+    stdout
   end
 end
