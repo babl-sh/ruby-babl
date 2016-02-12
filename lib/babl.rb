@@ -47,7 +47,7 @@ module Babl
       res = client[:babl].call('Module', params)
     rescue Quartz::ResponseError => e
       if e.message == 'babl-rpc: unknown module'
-        raise UnknownModuleError.new(message: 'Unknown Module')
+        raise UnknownModuleError.new('Unknown Module')
       else
         raise
       end

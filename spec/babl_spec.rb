@@ -46,6 +46,6 @@ describe Babl do
   it "fails when unknown module is requested" do
     expect {
       Babl.module! 'foooooooo/bbaaaaaaaaaaar'
-    }.to raise_error(Babl::UnknownModuleError)
+    }.to raise_error(Babl::UnknownModuleError, /unknown module/i)
   end
 end
