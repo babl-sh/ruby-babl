@@ -3,6 +3,7 @@ require 'base64'
 
 
 module Babl
+  class UnknownModuleError < StandardError; end
   class ModuleError < StandardError
     attr_reader :stdout, :stderr, :exitcode
 
@@ -42,7 +43,15 @@ module Babl
     if opts[:env]
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v; h }
     end
-    res = client[:babl].call('Module', params)
+    begin
+      res = client[:babl].call('Module', params)
+    rescue Quartz::ResponseError => e
+      if e.message == 'babl-rpc: unknown module'
+        raise UnknownModuleError.new(message: 'Unknown Module')
+      else
+        raise
+      end
+    end
     stdout = Base64.decode64(res["Stdout"]).strip
     exitcode = res['Exitcode']
     if exitcode != 0
