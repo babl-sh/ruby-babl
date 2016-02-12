@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  # spec.add_dependency "quartz", path: '/Users/l/projects/github/quartz'
+  spec.add_dependency "quartz", "~> 0.3"
   spec.add_dependency "multi_json", "~> 1.11"
 
   spec.add_development_dependency "bundler", "~> 1.10"
