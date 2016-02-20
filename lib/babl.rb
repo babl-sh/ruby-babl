@@ -31,7 +31,7 @@ module Babl
   end
 
   def self.client
-    puts "Using bin '#{bin_path}'"
+    STDERR.puts "Using bin '#{bin_path}'"
     @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
