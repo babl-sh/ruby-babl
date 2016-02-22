@@ -48,4 +48,8 @@ describe Babl do
       Babl.module! 'foooooooo/bbaaaaaaaaaaar'
     }.to raise_error(Babl::UnknownModuleError, /unknown module/i)
   end
+
+  it "converts env values to strings to avoid marshal error on Go's end" do
+    expect(Babl.module! "larskluge/string-append", in: "foo", env: {APPENDIX: 42}).to eq "foo42"
+  end
 end

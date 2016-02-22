@@ -41,7 +41,7 @@ module Babl
       params['Stdin'] = Base64.encode64(opts[:in]).strip
     end
     if opts[:env]
-      params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v; h }
+      params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
     end
     begin
       res = client[:babl].call('Module', params)
