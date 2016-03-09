@@ -4,6 +4,7 @@ require 'base64'
 
 module Babl
   class UnknownModuleError < StandardError; end
+
   class ModuleError < StandardError
     attr_reader :stdout, :stderr, :exitcode
 
@@ -11,6 +12,10 @@ module Babl
       @stdout = opts[:stdout]
       @stderr = opts[:stderr]
       @exitcode = opts[:exitcode]
+    end
+
+    def to_s
+      "Module execution failed with exitcode #{exitcode}. Stderr:\n#{stderr}"
     end
   end
 
@@ -56,7 +61,7 @@ module Babl
     exitcode = res['Exitcode']
     if exitcode != 0
       stderr = Base64.decode64(res["Stderr"]).strip
-      raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode), "Module execution failed with exitcode #{exitcode}"
+      raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode)
     end
     stdout
   end

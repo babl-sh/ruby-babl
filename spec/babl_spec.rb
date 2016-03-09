@@ -23,6 +23,7 @@ describe Babl do
       expect(e.stdout).to eq "this goes to stdout"
       expect(e.stderr).to eq "this goes to stderr\nsome more errors"
       expect(e.exitcode).to be 42
+      expect(e.message).to include "Stderr:\nthis goes to stderr\nsome more errors"
     end
   end
 
