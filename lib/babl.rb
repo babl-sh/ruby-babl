@@ -27,6 +27,7 @@ module Babl
       bin += "darwin_amd64" if RUBY_PLATFORM =~ /darwin/
       File.expand_path("../../bin/#{bin}", __FILE__)
     else
+      STDERR.puts "Warn: Using locally installed binary '#{system}'"
       system
     end
   end
@@ -36,7 +37,6 @@ module Babl
   end
 
   def self.client
-    STDERR.puts "Using bin '#{bin_path}'"
     @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
