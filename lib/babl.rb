@@ -4,6 +4,7 @@ require 'base64'
 
 module Babl
   class UnknownModuleError < StandardError; end
+  class ModuleNameFormatIncorrectError < StandardError; end
 
   class ModuleError < StandardError
     attr_reader :stdout, :stderr, :exitcode
@@ -51,8 +52,8 @@ module Babl
     begin
       res = client[:babl].call('Module', params)
     rescue Quartz::ResponseError => e
-      if e.message == 'babl-rpc: unknown module'
-        raise UnknownModuleError.new('Unknown Module')
+      if e.message == 'babl-rpc: module name format incorrect'
+        raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
       else
         raise
       end

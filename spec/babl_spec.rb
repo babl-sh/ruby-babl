@@ -44,10 +44,16 @@ describe Babl do
     expect(resized.size).to eq image_out.size
   end
 
-  it "fails when unknown module is requested" do
+  xit "fails when unknown module is requested" do
     expect {
       Babl.module! 'foooooooo/bbaaaaaaaaaaar'
     }.to raise_error(Babl::UnknownModuleError, /unknown module/i)
+  end
+
+  it "fails when a module is requested with an incorrect name format" do
+    expect {
+      Babl.module! 'foo'
+    }.to raise_error(Babl::ModuleNameFormatIncorrectError, /name format incorrect/i)
   end
 
   it "converts env values to strings to avoid marshal error on Go's end" do
