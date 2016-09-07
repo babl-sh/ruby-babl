@@ -38,9 +38,7 @@ module Babl
   end
 
   def self.client
-    path, endpoint = bin_path, ENV['BABL_ENDPOINT']
-    path = "#{path} -endpoint #{endpoint}" if endpoint
-    @client ||= Quartz::Client.new(bin_path: path)
+    @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
   def self.module! name, opts = {}
