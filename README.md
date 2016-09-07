@@ -25,6 +25,8 @@ Babl.module "string-append", in: "foo", env: {APPENDIX: "bar"}
  => "foobar"
 ```
 
+To connect to another endpoint, you can specify the env `BABL_ENDPOINT` with `"host:port", this will be picked up automatically.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
