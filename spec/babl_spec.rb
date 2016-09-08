@@ -20,8 +20,8 @@ describe Babl do
       Babl.module! "larskluge/test-fail"
       fail "No Exception raised."
     rescue Babl::ModuleError => e
-      expect(e.stdout).to eq "this goes to stdout"
-      expect(e.stderr).to eq "this goes to stderr\nsome more errors"
+      expect(e.stdout).to eq "this goes to stdout\n"
+      expect(e.stderr).to eq "this goes to stderr\nsome more errors\n"
       expect(e.exitcode).to be 42
       expect(e.message).to include "Stderr:\nthis goes to stderr\nsome more errors"
     end
