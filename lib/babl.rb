@@ -44,7 +44,7 @@ module Babl
   def self.module! name, opts = {}
     params = {'Name' => name}
     if opts[:in]
-      params['Stdin'] = Base64.encode64(opts[:in]).strip
+      params['Stdin'] = Base64.encode64(opts[:in])
     end
     if opts[:env]
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
@@ -58,10 +58,10 @@ module Babl
         raise
       end
     end
-    stdout = Base64.decode64(res["Stdout"]).strip
+    stdout = Base64.decode64(res["Stdout"])
     exitcode = res['Exitcode']
     if exitcode != 0
-      stderr = Base64.decode64(res["Stderr"]).strip
+      stderr = Base64.decode64(res["Stderr"])
       raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode)
     end
     stdout
