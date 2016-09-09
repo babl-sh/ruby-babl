@@ -37,8 +37,13 @@ module Babl
     `#{bin_path} -version`.strip
   end
 
-  def self.client
-    @client ||= Quartz::Client.new(bin_path: bin_path)
+  def self.client endpoint
+    @clients ||= {}
+    @clients[endpoint || ENV['BABL_ENDPOINT'] || 'default'] ||= begin
+      path = bin_path
+      path = "#{path} -endpoint #{endpoint}" if endpoint
+      Quartz::Client.new(bin_path: path)
+    end
   end
 
   def self.module! name, opts = {}
@@ -50,7 +55,7 @@ module Babl
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
     end
     begin
-      res = client[:babl].call('Module', params)
+      res = client(opts[:endpoint])[:babl].call('Module', params)
     rescue Quartz::ResponseError => e
       if e.message == 'babl-rpc: module name format incorrect'
         raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
