@@ -1,5 +1,6 @@
 require 'quartz'
 require 'base64'
+require 'net/http'
 
 
 module Babl
@@ -20,6 +21,12 @@ module Babl
     end
   end
 
+  def self.fetch_payload raw_response
+    url = raw_response['PayloadUrl']
+    raw_response['Stdout'] = Base64.strict_encode64(Net::HTTP.get URI(url)) if url != ''
+    raw_response
+  end
+
   def self.bin_path
     system = `which babl-rpc`.strip
     if system.empty?
@@ -37,32 +44,12 @@ module Babl
     `#{bin_path} -version`.strip
   end
 
-  def self.client endpoint
-    @clients ||= {}
-    @clients[endpoint || ENV['BABL_ENDPOINT'] || 'default'] ||= begin
-      path = bin_path
-      path = "#{path} -endpoint #{endpoint}" if endpoint
-      Quartz::Client.new(bin_path: path)
-    end
+  def self.client
+    @client ||= Quartz::Client.new(bin_path: bin_path)
   end
 
   def self.module! name, opts = {}
-    params = {'Name' => name}
-    if opts[:in]
-      params['Stdin'] = Base64.encode64(opts[:in])
-    end
-    if opts[:env]
-      params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
-    end
-    begin
-      res = client(opts[:endpoint])[:babl].call('Module', params)
-    rescue Quartz::ResponseError => e
-      if e.message == 'babl-rpc: module name format incorrect'
-        raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
-      else
-        raise
-      end
-    end
+    res = fetch_payload(call! name, opts)
     stdout = Base64.decode64(res["Stdout"])
     exitcode = res['Exitcode']
     if exitcode != 0
@@ -70,5 +57,28 @@ module Babl
       raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode)
     end
     stdout
+  end
+
+  def self.call! name, opts = {}
+    params = {'Name' => name}
+    if opts[:in]
+      params['Stdin'] = Base64.encode64(opts[:in])
+    end
+    if opts[:env]
+      params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
+    end
+    if opts[:endpoint]
+      params['BablEndpoint'] = opts[:endpoint]
+    end
+    begin
+      res = client[:babl].call('Module', params)
+    rescue Quartz::ResponseError => e
+      if e.message == 'babl-rpc: module name format incorrect'
+        raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
+      else
+        raise
+      end
+    end
+    res
   end
 end
