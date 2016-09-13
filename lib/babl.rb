@@ -1,5 +1,6 @@
 require 'quartz'
 require 'base64'
+require 'net/http'
 
 
 module Babl
@@ -18,6 +19,12 @@ module Babl
     def to_s
       "Module execution failed with exitcode #{exitcode}. Stderr:\n#{stderr}"
     end
+  end
+
+  def self.fetch_payload raw_response
+    url = raw_response['PayloadUrl']
+    raw_response['Stdout'] = Base64.strict_encode64(Net::HTTP.get URI(url)) if url != ''
+    raw_response
   end
 
   def self.bin_path
@@ -42,7 +49,7 @@ module Babl
   end
 
   def self.module! name, opts = {}
-    res = call! name, opts
+    res = fetch_payload(call! name, opts)
     stdout = Base64.decode64(res["Stdout"])
     exitcode = res['Exitcode']
     if exitcode != 0
