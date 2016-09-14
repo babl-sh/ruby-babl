@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Babl do
-  it 'has a version number' do
-    expect(Babl.version).not_to be nil
+  it 'has a rpc version number' do
+    expect(Babl.rpc_version).not_to be nil
   end
 
   it "checks a module's response" do

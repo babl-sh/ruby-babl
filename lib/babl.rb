@@ -36,7 +36,7 @@ module Babl
     end
   end
 
-  def self.version
+  def self.rpc_version
     `#{bin_path} -version`.strip
   end
 
