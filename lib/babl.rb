@@ -57,6 +57,9 @@ module Babl
     if opts[:in]
       params['Stdin'] = Base64.encode64(opts[:in])
     end
+    if opts[:payload_url]
+      params['PayloadUrl'] = opts[:payload_url]
+    end
     if opts[:env]
       params['Env'] = opts[:env].inject({}) { |h, (k,v)| h[k.to_s] = v.to_s; h }
     end
