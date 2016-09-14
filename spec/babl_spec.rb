@@ -70,6 +70,14 @@ describe Babl do
       res = Babl.call! "larskluge/string-upcase", payload_url: "http://gateway.ipfs.io/ipfs/QmW3J3czdUzxRaaN31Gtu5T1U5br3t631b8AHdvxHdsHWg"
       expect(res.stdout).to eq "BAR"
     end
+
+    it "does not throw an exception when a module call fails with exitcode != 0" do
+      res = nil
+      expect {
+        res = Babl.call! "larskluge/test-fail"
+      }.not_to raise_error
+      expect(res.exitcode).to be > 0
+    end
   end
 
   describe ".options_to_rpc_parameter" do
