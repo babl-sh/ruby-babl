@@ -89,6 +89,14 @@ describe Babl do
       expect(params["PayloadUrl"]).to be_nil
     end
 
+    it "checks empty string url" do
+      raw = "Zm9v\n"
+      response = Babl::ModuleResponse.new "Stdout" => raw, "PayloadUrl" => ""
+      params = Babl.options_to_rpc_parameter "a/b", in: response
+      expect(params["Stdin"]).to eq raw
+      expect(params["PayloadUrl"]).to be_nil
+    end
+
     it "copies previous module reponse output to input respecting payload_url" do
       url = "http://foo.com"
       response = Babl::ModuleResponse.new "Stdout" => "", "PayloadUrl" => url
