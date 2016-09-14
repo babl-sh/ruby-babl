@@ -2,6 +2,8 @@ require 'quartz'
 require 'base64'
 require 'net/http'
 
+require_relative 'babl/module_response'
+
 
 module Babl
   class UnknownModuleError < StandardError; end
@@ -19,12 +21,6 @@ module Babl
     def to_s
       "Module execution failed with exitcode #{exitcode}. Stderr:\n#{stderr}"
     end
-  end
-
-  def self.fetch_payload raw_response
-    url = raw_response['PayloadUrl']
-    raw_response['Stdout'] = Base64.strict_encode64(Net::HTTP.get URI(url)) if url != ''
-    raw_response
   end
 
   def self.bin_path
@@ -49,14 +45,11 @@ module Babl
   end
 
   def self.module! name, opts = {}
-    res = fetch_payload(call! name, opts)
-    stdout = Base64.decode64(res["Stdout"])
-    exitcode = res['Exitcode']
-    if exitcode != 0
-      stderr = Base64.decode64(res["Stderr"])
-      raise ModuleError.new(stdout: stdout, stderr: stderr, exitcode: exitcode)
+    res = call! name, opts
+    if res.exitcode != 0
+      raise ModuleError.new(stdout: res.stdout, stderr: res.stderr, exitcode: res.exitcode)
     end
-    stdout
+    res.stdout
   end
 
   def self.call! name, opts = {}
@@ -71,7 +64,7 @@ module Babl
       params['BablEndpoint'] = opts[:endpoint]
     end
     begin
-      res = client[:babl].call('Module', params)
+      ModuleResponse.new(client[:babl].call('Module', params))
     rescue Quartz::ResponseError => e
       if e.message == 'babl-rpc: module name format incorrect'
         raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
@@ -79,6 +72,5 @@ module Babl
         raise
       end
     end
-    res
   end
 end

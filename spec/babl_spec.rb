@@ -59,4 +59,11 @@ describe Babl do
   it "converts env values to strings to avoid marshal error on Go's end" do
     expect(Babl.module! "larskluge/string-append", in: "foo", env: {APPENDIX: 42}).to eq "foo42"
   end
+
+  describe ".call!" do
+    it "checks a basic usage" do
+      res = Babl.call! "larskluge/string-upcase", in: "foo"
+      expect(res.stdout).to eq "FOO"
+    end
+  end
 end
