@@ -53,9 +53,29 @@ module Babl
   end
 
   def self.call! name, opts = {}
+    begin
+      ModuleResponse.new(client[:babl].call('Module', options_to_rpc_parameter(name, opts)))
+    rescue Quartz::ResponseError => e
+      if e.message == 'babl-rpc: module name format incorrect'
+        raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
+      else
+        raise
+      end
+    end
+  end
+
+  def self.options_to_rpc_parameter name, opts
     params = {'Name' => name}
-    if opts[:in]
-      params['Stdin'] = Base64.encode64(opts[:in])
+    if input = opts[:in]
+      if input.is_a?(ModuleResponse)
+        if input.payload_url
+          params['PayloadUrl'] = input.payload_url
+        else
+          params['Stdin'] = Base64.encode64(input.stdout)
+        end
+      else
+        params['Stdin'] = Base64.encode64(input)
+      end
     end
     if opts[:payload_url]
       params['PayloadUrl'] = opts[:payload_url]
@@ -66,14 +86,6 @@ module Babl
     if opts[:endpoint]
       params['BablEndpoint'] = opts[:endpoint]
     end
-    begin
-      ModuleResponse.new(client[:babl].call('Module', params))
-    rescue Quartz::ResponseError => e
-      if e.message == 'babl-rpc: module name format incorrect'
-        raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
-      else
-        raise
-      end
-    end
+    params
   end
 end

@@ -71,4 +71,21 @@ describe Babl do
       expect(res.stdout).to eq "BAR"
     end
   end
+
+  describe ".options_to_rpc_parameter" do
+    it "copies previous module reponse output to input" do
+      raw = "Zm9v\n"
+      response = Babl::ModuleResponse.new "Stdout" => raw
+      params = Babl.options_to_rpc_parameter "a/b", in: response
+      expect(params["Stdin"]).to eq raw
+      expect(params["PayloadUrl"]).to be_nil
+    end
+
+    it "copies previous module reponse output to input respecting payload_url" do
+      url = "http://foo.com"
+      response = Babl::ModuleResponse.new "Stdout" => "", "PayloadUrl" => url
+      params = Babl.options_to_rpc_parameter "a/b", in: response
+      expect(params["PayloadUrl"]).to eq url
+    end
+  end
 end
