@@ -68,7 +68,7 @@ module Babl
     params = {'Name' => name}
     if input = opts[:in]
       if input.is_a?(ModuleResponse)
-        if input.payload_url.to_s != ""
+        if input.payload_url
           params['PayloadUrl'] = input.payload_url
         else
           params['Stdin'] = Base64.encode64(input.stdout)

@@ -5,14 +5,16 @@ module Babl
     def initialize response
       @stdout_raw = response["Stdout"]
       @stderr_raw = response["Stderr"]
-      @exitcode = response["Exitcode"]
+      @exitcode = response["Exitcode"].to_i
 
-      @payload_url = response["PayloadUrl"]
+      if !response["PayloadUrl"].nil? and response["PayloadUrl"] != ""
+        @payload_url = response["PayloadUrl"]
+      end
     end
 
     def stdout allow_fetch = true
       @stdout ||= begin
-        if payload_url.to_s != ""
+        if payload_url
           fetch_payload if allow_fetch
         else
           o = Base64.decode64(@stdout_raw)
@@ -31,7 +33,7 @@ module Babl
     end
 
     def fetch_payload
-      if payload_url.to_s != ""
+      if payload_url
         Net::HTTP.get URI(payload_url)
       end
     end
