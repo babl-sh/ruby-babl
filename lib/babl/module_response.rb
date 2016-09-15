@@ -37,5 +37,11 @@ module Babl
         Net::HTTP.get URI(payload_url)
       end
     end
+
+    def raise_exception_when_unsuccessful!
+      if exitcode != 0
+        raise ModuleError.new(stdout: stdout(false), stderr: stderr, exitcode: exitcode, payload_url: payload_url)
+      end
+    end
   end
 end

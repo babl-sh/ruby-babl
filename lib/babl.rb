@@ -10,16 +10,17 @@ module Babl
   class ModuleNameFormatIncorrectError < StandardError; end
 
   class ModuleError < StandardError
-    attr_reader :stdout, :stderr, :exitcode
+    attr_reader :stdout, :stderr, :exitcode, :payload_url
 
     def initialize opts = {}
       @stdout = opts[:stdout]
       @stderr = opts[:stderr]
       @exitcode = opts[:exitcode]
+      @payload_url = opts[:payload_url]
     end
 
     def to_s
-      "Module execution failed with exitcode #{exitcode}. Stderr:\n#{stderr}"
+      "Module execution failed with exitcode #{exitcode}. Payload url: #{payload_url}. Stderr:\n#{stderr}"
     end
   end
 
@@ -46,9 +47,7 @@ module Babl
 
   def self.module! name, opts = {}
     res = call! name, opts
-    if res.exitcode != 0
-      raise ModuleError.new(stdout: res.stdout, stderr: res.stderr, exitcode: res.exitcode)
-    end
+    res.raise_exception_when_unsuccessful!
     res.stdout
   end
 
