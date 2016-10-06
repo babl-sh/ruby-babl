@@ -57,6 +57,8 @@ module Babl
     rescue Quartz::ResponseError => e
       if e.message == 'babl-rpc: module name format incorrect'
         raise ModuleNameFormatIncorrectError.new('Module Name Format Incorrect')
+      elsif e.message =~ /^rpc error: code = 12 desc = unknown service/
+        raise UnknownModuleError.new('Unknown Module')
       else
         raise
       end

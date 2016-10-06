@@ -44,9 +44,9 @@ describe Babl do
     expect(resized.size).to eq image_out.size
   end
 
-  xit "fails when unknown module is requested" do
+  it "fails when unknown module is requested" do
     expect {
-      Babl.module! 'foooooooo/bbaaaaaaaaaaar'
+      Babl.module! 'foooooooo/bbaaaaaaaaaaar', endpoint: 'v5.babl.sh:4445'
     }.to raise_error(Babl::UnknownModuleError, /unknown module/i)
   end
 
