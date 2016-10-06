@@ -104,4 +104,10 @@ describe Babl do
       expect(params["PayloadUrl"]).to eq url
     end
   end
+
+  describe "multiple endpoints" do
+    it "calls one of two endpoints" do
+      expect(Babl.module! "larskluge/string-upcase", in: "foo", endpoint: 'babl.sh:4444,babl.sh:4445').to eq 'FOO'
+    end
+  end
 end
